@@ -1,14 +1,32 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Base64.sol";
 
-contract TravelLoot is ERC721Enumerable, ReentrancyGuard, Ownable {
+contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
 
-    //uint minPrice = 0.1 ether;
-    uint public maxTotalSupply = 10000;
+    uint minPrice = 30 ether;
+    uint public maxTotalSupply = 9999;
+    uint public maxLimit = 50;
+    
+    uint constant FLOAT_HANDLER_TEN_4 = 10000;
+
+    address SAFE = 0x6345615b3c054c12F0673F9575102bE6c2EF75D2;
+    address reserved1 = 0x7208C8f9F8c9cf4315C88578765eB0440388fd7E;
+    address reserved2 = 0xAFE356c6FFdb8f15DCC8504F44dAf16693730375;
+    address creator = 0xA8616438f6F18d68D1795740e34C9277A0F771e4;
+
+    modifier maxMintsPerWallet() {
+        require(balanceOf(msg.sender) <= maxLimit, "Only 50 mints allowed per wallet");
+        _;
+    }
+
+    modifier onlyOwner() {
+        require(SAFE == msg.sender, "Only owner is allowed");
+        _;
+    }
 
     string[] private Vehicles = [
         "Millennium Falcon",
@@ -43,7 +61,7 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard, Ownable {
     
     string[] private SpecialPowers = [
         "Spit-fire",
-       "Shape-shifting",
+        "Shape-shifting",
         "Indestructible",
         "Cannon-shooting",
         "Shielding",
@@ -68,8 +86,29 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard, Ownable {
         "Fire",
         "Water",
         "Leaf",
-        "Cloud"
+        "Cloud",
+        "Sky",
+        "Desert",
+        "Flower pink",
+        "Jet Black",
+        "Sapphire",
+        "Ocean Blue",
+        "Blood Red",
+        "Rainbow",
+        "Elephant Grey",
+        "Crocodile green",
+        "Military green",
+        "Grass Green",
+        "Winter White",
+        "Earth brown"
+
     ];
+
+    function transferOwnership(address newOwner) public onlyOwner returns (address) {
+        require(newOwner != address(0), "New owner is the zero address");
+        SAFE = newOwner;
+        return newOwner;
+    }
     
     function random(string memory input) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(input)));
@@ -156,16 +195,29 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard, Ownable {
         return output;
     }
 
-    function claim(uint256 tokenId) public nonReentrant payable {
-        //require(msg.value >= minPrice, "Mint price should be greater than 20 matic");
+    function mint(uint256 tokenId) public nonReentrant maxMintsPerWallet payable {
+        require(msg.value >= minPrice, "Mint price should be greater than 30 matic");
         require(tokenId > 0 && tokenId <= maxTotalSupply, "Token ID invalid");
-        _safeMint(_msgSender(), tokenId);
+        if (tokenId >= 5000 && tokenId <= 5100) {
+            require(msg.sender == reserved1, "Only reserved address can mint");
+             _safeMint(_msgSender(), tokenId);
+        }
+        else if (tokenId >= 5400 && tokenId <= 5500) {
+            require(msg.sender == reserved2, "Only reserved address can mint");
+             _safeMint(_msgSender(), tokenId);
+        }
+        else {
+            _safeMint(_msgSender(), tokenId);
+        }
     }
 
     function withdraw() public onlyOwner {
         uint redeemableBalance = address(this).balance;
+        uint ownerBalance = (redeemableBalance * 9900) / FLOAT_HANDLER_TEN_4;
+        uint creatorBalance = (redeemableBalance * 100) / FLOAT_HANDLER_TEN_4;
         require(redeemableBalance > 0, "Insufficient Balance");
-        payable(msg.sender).transfer(redeemableBalance);
+        payable(SAFE).transfer(ownerBalance);
+        payable(creator).transfer(creatorBalance);
     }
     
     function toString(uint256 value) internal pure returns (string memory) {
@@ -190,6 +242,6 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard, Ownable {
         return string(buffer);
     }
 
-    constructor() ERC721("TravelLoot", "TL") Ownable() {}
+    constructor() ERC721("TravelLoot", "Travel") {}
 }
 
