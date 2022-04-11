@@ -13,7 +13,6 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
     
     uint constant FLOAT_HANDLER_TEN_4 = 10000;
 
-    address SAFE = 0x6345615b3c054c12F0673F9575102bE6c2EF75D2;
     address reserved1 = 0x7208C8f9F8c9cf4315C88578765eB0440388fd7E;
     address reserved2 = 0xAFE356c6FFdb8f15DCC8504F44dAf16693730375;
     address creator = 0xA8616438f6F18d68D1795740e34C9277A0F771e4;
@@ -24,7 +23,7 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
     }
 
     modifier onlyOwner() {
-        require(SAFE == msg.sender, "Only owner is allowed");
+        require(reserved1 == msg.sender, "Only owner is allowed");
         _;
     }
 
@@ -106,7 +105,7 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
 
     function transferOwnership(address newOwner) public onlyOwner returns (address) {
         require(newOwner != address(0), "New owner is the zero address");
-        SAFE = newOwner;
+        reserved1 = newOwner;
         return newOwner;
     }
     
@@ -213,10 +212,12 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
 
     function withdraw() public onlyOwner {
         uint redeemableBalance = address(this).balance;
-        uint ownerBalance = (redeemableBalance * 9900) / FLOAT_HANDLER_TEN_4;
+        uint reserved1Bal = (redeemableBalance * 4950) / FLOAT_HANDLER_TEN_4;
+        uint reserved2Bal = (redeemableBalance * 4950) / FLOAT_HANDLER_TEN_4;
         uint creatorBalance = (redeemableBalance * 100) / FLOAT_HANDLER_TEN_4;
         require(redeemableBalance > 0, "Insufficient Balance");
-        payable(SAFE).transfer(ownerBalance);
+        payable(reserved1).transfer(reserved1Bal);
+        payable(reserved2).transfer(reserved2Bal);
         payable(creator).transfer(creatorBalance);
     }
     
