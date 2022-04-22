@@ -7,7 +7,7 @@ import "./Base64.sol";
 
 contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
 
-    uint minPrice = 30 ether;
+    uint minPrice = 5 ether;
     uint public maxTotalSupply = 9999;
     uint public maxLimit = 50;
     
