@@ -19,7 +19,7 @@ describe("TravelLoot Testing", () => {
 
     describe("Minting", () => {
         it("Should mint NFTs", async () => {
-           await travelLoot.mint(23, {value: ethers.utils.parseEther("2")});
+           await travelLoot.mint(23, {value: ethers.utils.parseEther("30")});
            await travelLoot.mint(232, {value: ethers.utils.parseEther("30")});
            expect(await travelLoot.totalSupply()).to.equal(2);
            expect(await travelLoot.ownerOf(23)).to.equal(owner.address);
