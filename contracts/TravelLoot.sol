@@ -13,7 +13,7 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
     
     uint constant FLOAT_HANDLER_TEN_4 = 10000;
 
-    address reserved1 = 0x7208C8f9F8c9cf4315C88578765eB0440388fd7E;
+    address reserved1 = 0x4F1589995F1e175AcD033B8D0d861e7e0235cC6D;
     address reserved2 = 0xAFE356c6FFdb8f15DCC8504F44dAf16693730375;
     address creator = 0xA8616438f6F18d68D1795740e34C9277A0F771e4;
 
@@ -188,7 +188,7 @@ contract TravelLoot is ERC721Enumerable, ReentrancyGuard{
         string memory output = string(abi.encodePacked(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7], parts[8]));
         output = string(abi.encodePacked(output, parts[9], parts[10], parts[11], parts[12], parts[13], parts[14], parts[15], parts[16]));
 
-        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "Player #', toString(tokenId), '", "description": "CricketLoot", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
+        string memory json = Base64.encode(bytes(string(abi.encodePacked('{"name": "Travel #', toString(tokenId), '", "description": "9999 exclusive randomized text-only Travel NFTs for the Lootverse.", "image": "data:image/svg+xml;base64,', Base64.encode(bytes(output)), '"}'))));
         output = string(abi.encodePacked('data:application/json;base64,', json));
 
         return output;
